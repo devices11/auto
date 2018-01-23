@@ -1,10 +1,8 @@
-import org.junit.After;
-import org.junit.Before;
+
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -14,21 +12,11 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
-public class InsuranceTest {
-    WebDriver driver;
-    String baseUrl;
-
-    @Before
-    public void beforeTest(){
-        System.setProperty("webdriver.chrome.driver", "drv/chromedriver.exe");
-        baseUrl = "http://www.sberbank.ru/ru/person";
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get(baseUrl);
-    }
+public class InsuranceTest extends BaseTest{
 
     @Test
     public void testInsurance(){
+        driver.get(baseUrl);
         driver.findElement(By.xpath("//ul[contains(@aria-labelledby,'alt-menu-mid__header4')]/li/a[contains(@aria-label,'Застраховать себя ')]")).click();
         driver.findElement(By.xpath("//ul[contains(@aria-labelledby,'alt-menu-mid__header4')]/li/div/div/div//a[contains(text(),'Страхование путешественников')]")).click();
 
@@ -98,15 +86,5 @@ public class InsuranceTest {
         assertEquals("Отделением УФМС по г.Москва",
                 driver.findElement(By.name("issuePlace")).getAttribute("value"));
 
-    }
-
-    public void fillField(By locator, String value){
-        driver.findElement(locator).clear();
-        driver.findElement(locator).sendKeys(value);
-    }
-
-    @After
-    public void afterTest(){
-        driver.quit();
     }
 }
