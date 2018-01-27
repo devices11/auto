@@ -6,85 +6,58 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import pages.ChoicePolicy;
+import pages.MainPage;
+import pages.Formalize;
+import pages.TravelInsurancePage;
 
 import static org.junit.Assert.*;
 
 public class InsuranceTest extends BaseTest{
 
+
     @Test
-    public void testInsurance(){
-        driver.get(baseUrl);
-        driver.findElement(By.xpath("//ul[contains(@aria-labelledby,'alt-menu-mid__header4')]/li/a[contains(@aria-label,'Застраховать себя ')]")).click();
-        driver.findElement(By.xpath("//ul[contains(@aria-labelledby,'alt-menu-mid__header4')]/li/div/div/div//a[contains(text(),'Страхование путешественников')]")).click();
+    public void testInsurance() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.selectMainMenu("Застраховать себя");
+        mainPage.selectSubMenu("Страхование путешественников");
 
         Wait<WebDriver> wait = new WebDriverWait(driver, 5, 1000);
 
         WebElement title = driver.findElement(By.xpath("//div[@class='sbrf-rich-outer']/h1"));
         wait.until(ExpectedConditions.visibilityOf(title));
         assertEquals("Страхование путешественников", title.getText());
-        driver.findElement(By.xpath("//div[contains(@class,'sbrf-rich-outer')]/p/a/img")).click();
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
-        ArrayList tabs2 = new ArrayList(driver.getWindowHandles());
-        driver.switchTo().window((String) tabs2.get(1));
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[contains(@ng-class,'b-form-prog-box')]//*[contains(text(),'Минимальная')]/..")))).click();
 
-        driver.findElement(By.xpath("//*[contains(text(),'Минимальная')]")).click();
-        driver.findElement(By.xpath("//span[contains(@class,'b-button-block-center')]/*[contains(text(),'Оформить')]")).click();
+        TravelInsurancePage travelInsurancePage = new TravelInsurancePage(driver);
 
-        fillField(By.name("insured0_surname"),"Ivanov");
-        fillField(By.name("insured0_name"),"Ivan");
-        fillField(By.name("insured0_birthDate"),"15.12.1985");
-        fillField(By.name("surname"),"Иванов");
-        fillField(By.name("name"),"Иван");
-        fillField(By.name("middlename"),"Иванович");
+
+        travelInsurancePage.sendButton("img[contains(@src,'id=f6c836e1-5c5c-4367-b0d0-bbfb96be9c53')]");
+        new TravelInsurancePage(driver).sendButton.click();
+
+        nextTab();
+
+        ChoicePolicy choicePolicy = new ChoicePolicy(driver);
+        choicePolicy.selectSetInsurance("Минимальная");
+        choicePolicy.selectButtonFormalize("Оформить");
+
+        Formalize formalize = new Formalize(driver);
+        formalize.fillField("Фамилия застрахованного","Ivanov");
+        formalize.fillField("Имя застрахованного","Ivan");
+        formalize.fillField("Дата рождения застрахованного","15.12.1985");
+        formalize.fillField("Фамилия","Иванов");
+        formalize.fillField("Имя","Иван");
+        formalize.fillField("Отчество","Иванович");
         driver.findElement(By.xpath("//*[@name='birthDate']")).click();
-        fillField(By.name("birthDate"),"15.12.1985");
-        fillField(By.name("passport_series"),"1123");
-        fillField(By.name("passport_number"),"222555");
-        fillField(By.name("issueDate"),"16.12.2003");
-        fillField(By.name("issuePlace"),"Отделением УФМС по г.Москва");
+        formalize.fillField("Дата рождения","15.12.1985");
+        formalize.fillField("Серия паспорта","5499");
+        formalize.fillField("Номер паспорта","547852");
+        formalize.fillField("Дата выдачи","16.12.2003");
+        formalize.fillField("Кем выдан","Отделением УФМС по г.Москва");
 
-        driver.findElement(By.xpath("//*[contains(text(),'Продолжить')]")).click();
+        formalize.selectButton("Продолжить");
 
-        assertEquals("Заполнены не все обязательные поля",
-                driver.findElement(By.xpath("//div[contains(@ng-show,'tryNext && myForm.$invalid')]")).getText());
-
-        assertEquals("Ivanov",
-                driver.findElement(By.name("insured0_surname")).getAttribute("value"));
-
-        assertEquals("Ivan",
-                driver.findElement(By.name("insured0_name")).getAttribute("value"));
-
-        assertEquals("15.12.1985",
-                driver.findElement(By.name("insured0_birthDate")).getAttribute("value"));
-
-        assertEquals("Иванов",
-                driver.findElement(By.name("surname")).getAttribute("value"));
-
-        assertEquals("Иван",
-                driver.findElement(By.name("name")).getAttribute("value"));
-
-        assertEquals("Иванович",
-                driver.findElement(By.name("middlename")).getAttribute("value"));
-
-        assertEquals("15.12.1985",
-                driver.findElement(By.name("birthDate")).getAttribute("value"));
-
-        assertEquals("1123",
-                driver.findElement(By.name("passport_series")).getAttribute("value"));
-
-        assertEquals("222555",
-                driver.findElement(By.name("passport_number")).getAttribute("value"));
-
-        assertEquals("16.12.2003",
-                driver.findElement(By.name("issueDate")).getAttribute("value"));
-
-        assertEquals("Отделением УФМС по г.Москва",
-                driver.findElement(By.name("issuePlace")).getAttribute("value"));
-
+        formalize.checkFieldErrorMessage("Заполнены не все обязательные поля");
     }
+
 }

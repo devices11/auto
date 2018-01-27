@@ -1,1 +1,6 @@
+pages\Formalize.class
+pages\BasePage.class
+pages\TravelInsurancePage.class
+pages\ChoicePolicy.class
 TestProperties.class
+pages\MainPage.class
